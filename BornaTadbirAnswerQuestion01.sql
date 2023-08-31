@@ -11,7 +11,7 @@ select p.PersonId,p.Name,p.Family,t.StartDate,
                  t.StartDate= LEAD(t.StartDate) over (order by t.StartDate)
             then (LEAD(t.StartDate) Over(partition by t.PersonId order by t.StartDate))
             else Null END
-			as EndDate,
+	   as EndDate,
 	   t.Sum
 into tab2 
 from tab1 t
@@ -20,10 +20,13 @@ join Persons p on t.PersonId=p.PersonId
 
 select *,
 	   Case when (LAG(t.PersonId) over (partition by t.PersonId order by t.PersonId)) =t.PersonId
-	   then Sum+ LAG(t.Sum) over (partition by t.PersonId order by t.PersonId) else t.Sum end as total
+	   then  sum(t.Sum) over (Partition by t.PersonId order by t.StartDate, t.PersonId) else t.Sum end  as Total
+	   into tab3
 from tab2 t
-order by Name, t.StartDate
+
+
+select * from tab3 
 
 drop table tab1
 drop table tab2
-
+drop table tab3
