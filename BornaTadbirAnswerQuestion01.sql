@@ -7,8 +7,7 @@ group by CAST(TransactionDate AS DATE), PersonId
 
 
 select p.PersonId,p.Name,p.Family,t.StartDate,
-       Case when t.PersonId=LEAD(t.PersonId) over (order by t.PersonId) and
-                 t.StartDate= LEAD(t.StartDate) over (order by t.StartDate)
+       Case when  t.StartDate!= LEAD(t.StartDate) over (partition by t.PersonId order by t.PersonId)
             then (LEAD(t.StartDate) Over(partition by t.PersonId order by t.StartDate))
             else Null END
 	   as EndDate,
